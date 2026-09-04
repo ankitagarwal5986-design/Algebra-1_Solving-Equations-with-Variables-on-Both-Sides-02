@@ -1,0 +1,1741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Brain & Mind | Solving Equations with Variables on Both Sides</title>
+  
+  <!-- MathJax Configuration for Clean LaTeX Rendering -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)'], ['$', '$']],
+        displayMath: [['\\[', '\\]'], ['$$', '$$']],
+        processEscapes: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      },
+      startup: {
+        pageReady: () => MathJax.startup.defaultPageReady()
+      }
+    };
+  </script>
+  <script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script>
+
+  <style>
+    :root {
+      --primary-blue: #0284c7;
+      --primary-dark: #0c4a6e;
+      --accent-blue: #0ea5e9;
+      --light-blue-bg: #f0f9ff;
+      --light-blue-card: #f8fafc;
+      --blue-border: #7dd3fc;
+      --blue-border-soft: #bae6fd;
+      --card-white: #ffffff;
+      --correct-green: #059669;
+      --correct-green-light: #d1fae5;
+      --incorrect-red: #dc2626;
+      --incorrect-red-light: #fee2e2;
+      --brand-gold: #f59e0b;
+      --brand-gold-dark: #d97706;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --shadow-sm: 0 1px 3px rgba(2, 132, 199, 0.08);
+      --shadow-md: 0 4px 8px -1px rgba(2, 132, 199, 0.12);
+      --shadow-lg: 0 12px 24px -4px rgba(12, 74, 110, 0.15);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      background: linear-gradient(180deg, #f0f9ff 0%, #ffffff 320px, #f0f9ff 100%);
+      color: var(--text-main);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(135deg, var(--primary-dark) 0%, #0369a1 60%, var(--primary-blue) 100%);
+      color: #ffffff; padding: 0.85rem 1.75rem; box-shadow: var(--shadow-md); position: sticky; top: 0; z-index: 100;
+    }
+    .header-container {
+      max-width: 1440px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+    }
+    .brand-group { display: flex; align-items: center; gap: 14px; }
+    .brand-logo-wrap {
+      background: #ffffff; padding: 6px 12px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+    .brand-logo-svg { width: 48px; height: 48px; display: block; }
+    .brand-title h1 { font-size: 1.25rem; font-weight: 800; letter-spacing: -0.02em; }
+    .brand-title p { font-size: 0.8rem; color: #bae6fd; font-weight: 600; }
+
+    /* Timer Widget */
+    .timer-widget {
+      display: flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.3); padding: 5px 14px; border-radius: 20px;
+    }
+    .timer-display {
+      font-family: 'Segoe UI', monospace; font-size: 1.05rem; font-weight: 800; color: #ffffff; letter-spacing: 1px; min-width: 54px; text-align: center;
+    }
+    .timer-btn {
+      background: #ffffff; border: none; color: var(--primary-dark); font-size: 0.75rem; font-weight: 700;
+      padding: 4px 9px; border-radius: 12px; cursor: pointer; transition: all 0.2s;
+    }
+    .timer-btn:hover { background: #e0f2fe; color: var(--primary-blue); }
+
+    /* Toast Notification for Timed Reminders */
+    .toast-reminder {
+      display: none; position: fixed; bottom: 25px; right: 25px; background: #0c4a6e; color: #ffffff;
+      padding: 14px 22px; border-radius: 14px; box-shadow: 0 10px 25px rgba(0,0,0,0.25); border: 2px solid var(--blue-border);
+      z-index: 1000; font-weight: 700; font-size: 0.95rem; animation: slideUp 0.3s ease-out;
+    }
+    @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+    .nav-tabs { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .tab-btn {
+      background: rgba(255, 255, 255, 0.18); border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #ffffff; padding: 7px 15px; border-radius: 20px; cursor: pointer; font-size: 0.86rem; font-weight: 600; transition: all 0.2s;
+    }
+    .tab-btn:hover, .tab-btn.active {
+      background: #ffffff; color: var(--primary-blue); box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    }
+    .user-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .user-badge {
+      background: rgba(255, 255, 255, 0.18); border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; color: #f1f5f9; display: flex; align-items: center; gap: 6px;
+    }
+    .btn-icon {
+      background: rgba(255, 255, 255, 0.22); border: none; color: #ffffff; padding: 8px 14px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: all 0.2s;
+    }
+    .btn-icon:hover { background: rgba(255, 255, 255, 0.35); }
+
+    main { max-width: 1440px; width: 100%; margin: 1.5rem auto; padding: 0 1rem; flex: 1; }
+    .view-section { display: none; }
+    .view-section.active { display: block; animation: fadeIn 0.25s ease-in-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Theory Notes Layout */
+    .notes-card { max-width: 1100px; margin: 1rem auto 2rem auto; background: var(--card-white); border-radius: var(--radius-lg); padding: 2.5rem; border: 2px solid var(--blue-border-soft); box-shadow: var(--shadow-lg); }
+    .notes-header { border-bottom: 2px solid var(--blue-border-soft); padding-bottom: 1.25rem; margin-bottom: 1.5rem; }
+    .notes-header h2 { color: var(--primary-dark); font-size: 1.7rem; }
+    .notes-body h3 { color: var(--primary-blue); margin: 1.8rem 0 0.6rem 0; font-size: 1.22rem; border-bottom: 1.5px solid var(--blue-border-soft); padding-bottom: 5px; display: flex; align-items: center; gap: 8px; }
+    .notes-body p, .notes-body ul, .notes-body ol { color: var(--text-main); font-size: 1.02rem; line-height: 1.8; margin-bottom: 1rem; }
+    .notes-body ul, .notes-body ol { padding-left: 1.6rem; }
+    .formula-callout { background: #f0f9ff; border: 1px solid var(--blue-border-soft); border-left: 4px solid var(--primary-blue); padding: 14px 18px; border-radius: var(--radius-sm); margin: 14px 0; font-size: 1.05rem; }
+    .step-badge { display: inline-block; background: #e0f2fe; color: #0369a1; font-weight: 800; font-size: 0.8rem; padding: 2px 10px; border-radius: 12px; margin-right: 6px; }
+
+    /* Problem Grid Workspace */
+    .learning-grid-layout { display: grid; grid-template-columns: 1fr 390px; gap: 1.5rem; align-items: start; }
+    @media (max-width: 1080px) { .learning-grid-layout { grid-template-columns: 1fr; } }
+    
+    .problem-card { background: var(--card-white); border-radius: var(--radius-lg); padding: 2rem; box-shadow: var(--shadow-md); border: 2px solid var(--blue-border-soft); }
+    .problem-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 1.5px solid var(--blue-border-soft); }
+    .p-tag { font-size: 1.15rem; font-weight: 800; color: var(--primary-blue); }
+    .category-badge { background: #e0f2fe; color: var(--primary-dark); font-weight: 700; font-size: 0.8rem; padding: 3px 10px; border-radius: 6px; border: 1px solid var(--blue-border); margin-left: 8px; }
+    .parts-badge { background: #fef3c7; color: #b45309; font-weight: 700; font-size: 0.8rem; padding: 3px 9px; border-radius: 6px; border: 1px solid #fde68a; margin-left: 6px; }
+    .status-badge { font-size: 0.8rem; font-weight: 700; padding: 4px 10px; border-radius: 12px; text-transform: uppercase; }
+    .badge-unvisited { background: #f8fafc; color: var(--text-muted); border: 1px solid #cbd5e1; }
+    .badge-progress { background: #dbeafe; color: #1e40af; }
+    .badge-complete { background: var(--correct-green-light); color: var(--correct-green); }
+    .badge-skipped { background: #fef3c7; color: #b45309; }
+
+    .problem-context { font-size: 1.15rem; font-weight: 500; margin-bottom: 1.25rem; background: #f0f9ff; border-left: 4px solid var(--accent-blue); padding: 16px 20px; border-radius: var(--radius-sm); line-height: 2.2; border: 1px solid var(--blue-border-soft); border-left-width: 4px; }
+
+    /* Step Cards */
+    .steps-container { display: flex; flex-direction: column; gap: 1.25rem; }
+    .step-card { border: 2px solid var(--blue-border-soft); border-radius: var(--radius-md); padding: 1.25rem 1.5rem; background: #ffffff; transition: all 0.25s ease-in-out; }
+    .step-card.active { border-color: var(--accent-blue); box-shadow: 0 4px 12px rgba(2, 132, 199, 0.15); }
+    .step-card.completed { border-color: var(--correct-green); background: #fcfdfc; }
+    
+    .step-header-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+    .step-title-text { font-weight: 700; font-size: 1rem; color: var(--primary-dark); }
+    .step-status-indicator { font-size: 0.8rem; font-weight: 700; padding: 2px 8px; border-radius: 6px; }
+    .step-card.completed .step-status-indicator { background: var(--correct-green-light); color: var(--correct-green); }
+    .step-card.active .step-status-indicator { background: #e0f2fe; color: var(--primary-dark); }
+
+    .step-prompt { font-size: 1.05rem; font-weight: 500; margin-bottom: 1rem; color: var(--text-main); line-height: 2.4; }
+
+    /* Step Inputs */
+    .step-input {
+      display: inline-block; width: 180px; padding: 7px 11px; font-size: 1.05rem; font-weight: 700; font-family: 'Segoe UI', monospace;
+      text-align: center; color: var(--primary-blue); background: #ffffff; border: 2px solid #7dd3fc; border-radius: var(--radius-sm); outline: none; margin: 0 4px; vertical-align: middle;
+    }
+    .step-input:focus { border-color: var(--primary-blue); box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2); }
+    .step-input.input-correct { border-color: var(--correct-green) !important; background: var(--correct-green-light) !important; color: #065f46 !important; }
+    .step-input.input-incorrect { border-color: var(--incorrect-red) !important; background: var(--incorrect-red-light) !important; color: #991b1b !important; }
+
+    .step-controls { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px dashed var(--blue-border-soft); }
+    .step-feedback-msg { font-size: 0.88rem; font-weight: 600; }
+    .step-feedback-msg.correct { color: #166534; }
+    .step-feedback-msg.incorrect { color: #b91c1c; }
+
+    /* Tools Panel */
+    .tools-panel {
+      background: #f0f9ff; border: 1.5px solid var(--blue-border); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1.25rem;
+    }
+    .tool-tab-header {
+      display: flex; gap: 8px; border-bottom: 1.5px solid var(--blue-border-soft); padding-bottom: 8px; margin-bottom: 12px;
+    }
+    .tool-tab-btn {
+      background: none; border: none; font-size: 0.85rem; font-weight: 700; color: var(--text-muted); cursor: pointer; padding: 4px 8px; border-radius: 4px;
+    }
+    .tool-tab-btn.active { color: var(--primary-blue); background: #e0f2fe; }
+    .math-pad-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+    .math-pad-btn {
+      background: #ffffff; border: 1px solid var(--blue-border); padding: 8px 4px; border-radius: var(--radius-sm); font-weight: 700; font-size: 0.95rem; cursor: pointer; text-align: center; color: var(--primary-dark);
+    }
+    .math-pad-btn:hover { background: var(--primary-blue); color: #ffffff; }
+
+    /* Calculator View */
+    .calc-box { background: #ffffff; border: 1.5px solid var(--blue-border); border-radius: var(--radius-sm); padding: 10px; }
+    .calc-screen { width: 100%; background: #0c4a6e; color: #7dd3fc; font-family: monospace; font-size: 1.1rem; padding: 10px; border-radius: 4px; text-align: right; margin-bottom: 8px; overflow-x: auto; }
+    .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+    .calc-btn { background: #f0f9ff; border: 1px solid var(--blue-border-soft); padding: 8px; border-radius: 4px; font-weight: 700; font-size: 0.9rem; cursor: pointer; text-align: center; color: var(--primary-dark); }
+    .calc-btn:hover { background: #e0f2fe; }
+    .calc-btn.op { background: #bae6fd; color: #0c4a6e; }
+    .calc-btn.eq { background: var(--primary-blue); color: #fff; }
+
+    /* Palette Sidebar */
+    .palette-card { background: var(--card-white); border-radius: var(--radius-lg); padding: 1.25rem; border: 2px solid var(--blue-border-soft); position: sticky; top: 90px; box-shadow: var(--shadow-md); }
+    .palette-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin: 1rem 0; max-height: 380px; overflow-y: auto; padding-right: 4px; }
+    .palette-btn { aspect-ratio: 1; border-radius: var(--radius-sm); border: 1.5px solid var(--blue-border-soft); background: #f8fafc; color: var(--text-muted); font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; }
+    .palette-btn.active { border: 2.5px solid var(--primary-blue) !important; background: #e0f2fe !important; color: var(--primary-blue) !important; }
+    .palette-btn.completed { background: var(--correct-green) !important; color: #ffffff !important; border-color: var(--correct-green) !important; }
+    .palette-btn.progress { background: #93c5fd !important; border-color: #3b82f6 !important; color: #0f172a !important; }
+    .palette-btn.skipped { background: #fef3c7 !important; color: #b45309 !important; border-color: #fde68a !important; }
+
+    .problem-action-bar { display: flex; justify-content: space-between; align-items: center; padding-top: 1.25rem; border-top: 1.5px solid var(--blue-border-soft); margin-top: 1.5rem; flex-wrap: wrap; gap: 10px; }
+    .btn { padding: 9px 16px; border-radius: var(--radius-sm); font-weight: 700; font-size: 0.92rem; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease; }
+    .btn-step-check { background: var(--primary-blue); color: #ffffff; }
+    .btn-step-back { background: #f0f9ff; color: var(--primary-dark); border: 1px solid var(--blue-border); }
+    .btn-secondary { background: #e2e8f0; color: var(--text-main); }
+    .btn-skip { background: #ffffff; color: var(--brand-gold-dark); border: 1.5px solid var(--brand-gold-dark); }
+
+    /* Score Report */
+    .score-hero-card { background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-blue) 60%, var(--accent-blue) 100%); color: #ffffff; border-radius: var(--radius-lg); padding: 2.5rem 2rem; text-align: center; margin-bottom: 2rem; box-shadow: var(--shadow-lg); }
+    .score-circle { width: 115px; height: 115px; border-radius: 50%; background: rgba(255,255,255,0.15); border: 4px solid #7dd3fc; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto 1rem auto; }
+    .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; max-width: 600px; margin: 1.5rem auto 0 auto; }
+    .stat-pill { background: rgba(255,255,255,0.12); padding: 10px; border-radius: var(--radius-md); }
+    .review-card { background: #ffffff; border: 2px solid var(--blue-border-soft); border-radius: var(--radius-md); padding: 1.5rem; margin-bottom: 1rem; box-shadow: var(--shadow-sm); line-height: 2.2; }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="header-container">
+      <div class="brand-group">
+        <div class="brand-logo-wrap">
+          <svg class="brand-logo-svg" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M45 42 C66 22, 94 22, 115 42" stroke="#f59e0b" stroke-width="8" stroke-linecap="round" fill="none"/>
+            <path d="M56 56 C70 42, 90 42, 104 56" stroke="#f59e0b" stroke-width="8" stroke-linecap="round" fill="none"/>
+            <path d="M68 70 C75 62, 85 62, 92 70" stroke="#f59e0b" stroke-width="7" stroke-linecap="round" fill="none"/>
+            <path d="M25 80 L76 96 L76 136 L25 120 Z" stroke="#334155" stroke-width="7" fill="#ffffff" stroke-linejoin="round"/>
+            <path d="M135 80 L84 96 L84 136 L135 120 Z" stroke="#334155" stroke-width="7" fill="#ffffff" stroke-linejoin="round"/>
+            <line x1="40" y1="94" x2="68" y2="103" stroke="#334155" stroke-width="5" stroke-linecap="round"/>
+            <line x1="40" y1="108" x2="68" y2="117" stroke="#334155" stroke-width="5" stroke-linecap="round"/>
+            <line x1="120" y1="94" x2="92" y2="103" stroke="#334155" stroke-width="5" stroke-linecap="round"/>
+            <line x1="120" y1="108" x2="92" y2="117" stroke="#334155" stroke-width="5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="brand-title">
+          <h1>Brain &amp; Mind Academy</h1>
+          <p>B&amp;M - The Experts • Variables on Both Sides &amp; Real-World Modeling</p>
+        </div>
+      </div>
+
+      <!-- Live Interactive Timer with Audio Reminders -->
+      <div class="timer-widget">
+        <span style="font-size:0.9rem;">⏱️</span>
+        <span class="timer-display" id="timerDisplay">00:00</span>
+        <button class="timer-btn" id="timerToggleBtn" onclick="toggleTimer()">Pause</button>
+        <button class="timer-btn" onclick="resetTimer()">Reset</button>
+        <button class="timer-btn" style="background:#e0f2fe; color:var(--primary-dark);" onclick="playReminderChime()">🔔 Test Sound</button>
+      </div>
+
+      <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchMainTab('theory')">📖 Theory &amp; Modeling Guide</button>
+        <button class="tab-btn" onclick="switchMainTab('sheet')">✍️ Practice Sheet (Questions 1–35)</button>
+        <button class="tab-btn" onclick="switchMainTab('solutions')">📋 Complete Solutions</button>
+      </div>
+      <div class="user-actions">
+        <div class="user-badge"><span id="userEmailSpan">Student</span></div>
+        <button class="btn-icon" id="soundToggleBtn"><span id="soundIcon">🔊</span></button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Notification Banner for 20-min and 5-min Audio Reminders -->
+  <div id="reminderToast" class="toast-reminder"></div>
+
+  <main>
+    
+    <!-- 1. Theory Notes Tab -->
+    <section id="theoryView" class="view-section active">
+      <div class="notes-card">
+        <div class="notes-header">
+          <h2>Solving Equations with Variables on Both Sides: Complete Mastery Guide</h2>
+          <p style="color: var(--text-muted); font-size: 0.95rem;">Step-by-step mathematical procedures for simplifying expressions, collecting variables, clearing fractions and decimals, and setting up multi-stage word problems.</p>
+        </div>
+
+        <div class="notes-body">
+          <h3><span class="step-badge">STRATEGY 1</span> Simplify Each Side Independently</h3>
+          <p>Always expand parentheses using the <strong>Distributive Property</strong> and combine like terms on each side of the equation before attempting to move terms across the equal sign:</p>
+          <div class="formula-callout">
+            <strong>Demonstration:</strong> Solve \( 5(n - 7) = 2(n + 14) \)<br>
+            • Expand left side: \( 5n - 35 \)<br>
+            • Expand right side: \( 2n + 28 \)<br>
+            • Collect variable terms: \( 5n - 2n = 28 + 35 \implies 3n = 63 \implies n = 21 \)
+          </div>
+
+          <h3><span class="step-badge">STRATEGY 2</span> Clearing Fractions and Decimals</h3>
+          <p>Eliminate fractions by multiplying every term on both sides by the <strong>Least Common Denominator (LCD)</strong>, or eliminate decimals by multiplying by powers of 10 (\(10, 100, 1000\)):</p>
+          <div class="formula-callout">
+            <strong>Fraction Clearing:</strong> Solve \( \frac{q + 1}{2} = \frac{q - 1}{3} \)<br>
+            • Multiply both sides by \( \text{LCD} = 6 \): \( 3(q + 1) = 2(q - 1) \implies 3q + 3 = 2q - 2 \implies q = -5 \)<br><br>
+            <strong>Decimal Clearing:</strong> Solve \( 0.25t = 0.25 - t \)<br>
+            • Add \( t \) to both sides: \( 1.25t = 0.25 \implies t = \frac{0.25}{1.25} = 0.2 \) (or \( \frac{1}{5} \))
+          </div>
+
+          <h3><span class="step-badge">STRATEGY 3</span> Special Solutions: Identities vs. Contradictions</h3>
+          <ul>
+            <li><strong>Identity (Infinitely Many Solutions):</strong> Occurs when variable terms cancel out, leaving a universally true numerical statement (e.g. \( 2c + 3 = 2c + 3 \implies 3 = 3 \)). Any real number is a valid solution.</li>
+            <li><strong>Contradiction (No Solution):</strong> Occurs when variable terms cancel out, leaving a false numerical statement (e.g. \( 12b + 9 = 12b + 11 \implies 9 = 11 \)). No real number satisfies the equation.</li>
+          </ul>
+
+          <h3><span class="step-badge">STRATEGY 4</span> Multi-Step Word Problem Modeling Blueprint</h3>
+          <p>When modeling word problems with variables on both sides, structure your approach through explicit sequential steps:</p>
+          <div class="formula-callout">
+            <ol>
+              <li><strong>Define the Variable &amp; Normalize Units:</strong> Identify the unknown quantity and ensure all rates, distances, and times share identical units (e.g., converting feet to inches, or minutes to seconds).</li>
+              <li><strong>Construct the Expressions:</strong> Write algebraic expressions for both competing options, moving objects, or account values.</li>
+              <li><strong>Equate and Solve:</strong> Set the two expressions equal to find the break-even point or intersection condition.</li>
+              <li><strong>Interpret Real-World Constraints:</strong> Calculate secondary questions such as final costs, heights, or elapsed rest periods.</li>
+            </ol>
+          </div>
+        </div>
+
+        <div style="margin-top:2rem; background:#f0f9ff; border:2px solid var(--blue-border); border-radius:var(--radius-md); padding:1.5rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+          <div>
+            <strong>Ready to practice all 35 questions sequentially?</strong>
+            <p style="font-size: 0.9rem; color: var(--primary-dark); margin-top:2px;">Work through each equation and multi-stage applied word problem with instant auto-verification.</p>
+          </div>
+          <button class="btn btn-primary" onclick="switchMainTab('sheet')" style="background:var(--primary-blue); color:#fff;">
+            Start 35-Question Practice Sheet →
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Guided Practice Sheet (Interactive Workspace) -->
+    <section id="sheetView" class="view-section">
+      <div class="learning-grid-layout">
+        
+        <!-- Left Side: Active Problem & Step Sequence -->
+        <div class="problem-card">
+          <div class="problem-header">
+            <div>
+              <span class="p-tag" id="pNumberDisplay">Question 1</span>
+              <span class="category-badge" id="pCategoryBadge">Basic Equations</span>
+              <span class="parts-badge" id="pPartsBadge">2 Steps</span>
+            </div>
+            <div class="status-badge badge-unvisited" id="pStatusBadge">Unvisited</div>
+          </div>
+          
+          <div class="problem-context" id="pContextDisplay"></div>
+
+          <!-- On-Screen Mathematical Keypad & Calculator -->
+          <div class="tools-panel">
+            <div class="tool-tab-header">
+              <button class="tool-tab-btn active" id="tabPadBtn" onclick="switchToolTab('pad')">⌨️ Mathematical Keypad</button>
+              <button class="tool-tab-btn" id="tabCalcBtn" onclick="switchToolTab('calc')">🧮 Calculator</button>
+            </div>
+            
+            <div id="mathPadView">
+              <div class="math-pad-grid">
+                <button class="math-pad-btn" onclick="insertSymbol('x')">x</button>
+                <button class="math-pad-btn" onclick="insertSymbol('r')">r</button>
+                <button class="math-pad-btn" onclick="insertSymbol('n')">n</button>
+                <button class="math-pad-btn" onclick="insertSymbol('w')">w</button>
+                <button class="math-pad-btn" onclick="insertSymbol('q')">q</button>
+                <button class="math-pad-btn" onclick="insertSymbol('c')">c</button>
+                <button class="math-pad-btn" onclick="insertSymbol('b')">b</button>
+                <button class="math-pad-btn" onclick="insertSymbol('m')">m</button>
+                <button class="math-pad-btn" onclick="insertSymbol('y')">y</button>
+                <button class="math-pad-btn" onclick="insertSymbol('t')">t</button>
+                <button class="math-pad-btn" onclick="insertSymbol('k')">k</button>
+                <button class="math-pad-btn" onclick="insertSymbol('p')">p</button>
+                <button class="math-pad-btn" onclick="insertSymbol('g')">g</button>
+                <button class="math-pad-btn" onclick="insertSymbol('.')">.</button>
+                <button class="math-pad-btn" onclick="insertSymbol('/')">/</button>
+                <button class="math-pad-btn" onclick="insertSymbol('-')">-</button>
+                <button class="math-pad-btn" onclick="insertSymbol('+')">+</button>
+                <button class="math-pad-btn" onclick="insertSymbol('(')">(</button>
+                <button class="math-pad-btn" onclick="insertSymbol(')')">)</button>
+                <button class="math-pad-btn" onclick="insertSymbol('Identity')">Identity</button>
+                <button class="math-pad-btn" onclick="insertSymbol('No solution')">No solution</button>
+                <button class="math-pad-btn" onclick="insertSymbol('Yes')">Yes</button>
+                <button class="math-pad-btn" onclick="insertSymbol('No')">No</button>
+                <button class="math-pad-btn" style="background:#fee2e2; color:#dc2626;" onclick="clearActiveField()">Clear</button>
+              </div>
+            </div>
+
+            <div id="calcView" style="display:none;">
+              <div class="calc-box">
+                <div class="calc-screen" id="calcScreen">0</div>
+                <div class="calc-grid">
+                  <button class="calc-btn" onclick="calcAppend('(')">(</button>
+                  <button class="calc-btn" onclick="calcAppend(')')">)</button>
+                  <button class="calc-btn" onclick="calcClear()">C</button>
+                  <button class="calc-btn op" onclick="calcAppend('/')">/</button>
+                  <button class="calc-btn" onclick="calcAppend('7')">7</button>
+                  <button class="calc-btn" onclick="calcAppend('8')">8</button>
+                  <button class="calc-btn" onclick="calcAppend('9')">9</button>
+                  <button class="calc-btn op" onclick="calcAppend('*')">*</button>
+                  <button class="calc-btn" onclick="calcAppend('4')">4</button>
+                  <button class="calc-btn" onclick="calcAppend('5')">5</button>
+                  <button class="calc-btn" onclick="calcAppend('6')">6</button>
+                  <button class="calc-btn op" onclick="calcAppend('-')">-</button>
+                  <button class="calc-btn" onclick="calcAppend('1')">1</button>
+                  <button class="calc-btn" onclick="calcAppend('2')">2</button>
+                  <button class="calc-btn" onclick="calcAppend('3')">3</button>
+                  <button class="calc-btn op" onclick="calcAppend('+')">+</button>
+                  <button class="calc-btn" onclick="calcAppend('0')">0</button>
+                  <button class="calc-btn" onclick="calcAppend('.')">.</button>
+                  <button class="calc-btn op" onclick="calcSqrt()">√</button>
+                  <button class="calc-btn eq" onclick="calcEval()">=</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Progressive Step Stack -->
+          <div class="steps-container" id="stepsListContainer"></div>
+
+          <!-- Problem Navigation Bar -->
+          <div class="problem-action-bar">
+            <div style="display: flex; gap: 8px;">
+              <button class="btn btn-secondary" id="prevProblemBtn">← Prev Question</button>
+              <button class="btn btn-secondary" id="nextProblemBtn">Next Question →</button>
+            </div>
+            <button class="btn btn-skip" id="skipProblemBtn">Skip Question</button>
+          </div>
+        </div>
+
+        <!-- Right Side: Sidebar Navigation Palette -->
+        <aside class="palette-card">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <strong style="color:var(--primary-dark); font-size:1.02rem;">35-Question Index</strong>
+            <span style="font-size:0.85rem; color:var(--primary-blue); font-weight:700;" id="completionRateText">0/35 Solved</span>
+          </div>
+          <div class="palette-grid" id="paletteGridContainer"></div>
+          <button class="btn btn-primary" id="finishAssessmentBtn" style="margin-top: 1.25rem; width: 100%; background:var(--primary-blue); color:#fff;">Finish &amp; View All Solutions</button>
+        </aside>
+
+      </div>
+    </section>
+
+    <!-- 3. Final Review & Complete Solutions -->
+    <section id="solutionsView" class="view-section">
+      <div class="score-hero-card">
+        <span style="background:rgba(255,255,255,0.2); color:#bae6fd; padding:4px 10px; border-radius:12px; font-weight:700;">Performance Report</span>
+        <h2 style="margin: 0.5rem 0; font-size: 1.7rem;">Variables on Both Sides Complete Report</h2>
+        <div class="score-circle">
+          <div id="finalScoreVal" style="font-size:2rem; font-weight:800;">0</div>
+          <div style="font-size:0.8rem; color:#bae6fd;">out of 35</div>
+        </div>
+        <p id="performanceFeedbackDesc" style="color: #bae6fd; font-size:0.95rem; max-width:540px; margin:0 auto;"></p>
+        <div class="stats-row">
+          <div class="stat-pill"><div style="font-size:0.75rem; color:#bae6fd;">Accuracy</div><div id="accuracyStat" style="font-size:1.2rem; font-weight:700;">0%</div></div>
+          <div class="stat-pill"><div style="font-size:0.75rem; color:#bae6fd;">Solved</div><div id="correctCountStat" style="font-size:1.2rem; font-weight:700; color:#86efac;">0</div></div>
+          <div class="stat-pill"><div style="font-size:0.75rem; color:#bae6fd;">Skipped</div><div id="skippedCountStat" style="font-size:1.2rem; font-weight:700; color:#fde047;">0</div></div>
+        </div>
+        <div style="margin-top: 1.5rem; display:flex; justify-content:center; gap:10px;">
+          <button class="btn" style="background: rgba(255,255,255,0.25); color:#fff;" id="retakeQuizBtn">↺ Retake Learning Sheet</button>
+          <button class="btn" style="background:#fff; color:var(--primary-dark);" onclick="window.print()">🖨️ Print Solutions</button>
+        </div>
+      </div>
+      <h3 style="color: var(--primary-dark); margin-bottom:1rem;">Complete Step-by-Step Mathematical Solutions (Questions 1 to 35)</h3>
+      <div id="reviewListContainer"></div>
+    </section>
+
+  </main>
+
+  <script>
+    /* ==========================================================================
+       COMPLETE 35-QUESTION DATASET (RENUMBERED SEQUENTIALLY FROM 1)
+       ========================================================================== */
+    const PROBLEMS_DATA = [
+      // Q1 (Image 1, #16)
+      {
+        id: 1,
+        title: "Question 1",
+        category: "Basic Equations",
+        partsInfo: "2 Steps Required",
+        context: "Solve the linear equation: \\[ 5x - 4 = 4x \\]",
+        steps: [
+          {
+            title: "Step 1: Collect Variable Terms",
+            prompt: "Subtract \\( 4x \\) from both sides: \\( 5x - 4x - 4 = 0 \\implies x - 4 = 0 \\).",
+            explanation: "\\( 5x - 4x = x \\), leaving \\( x - 4 = 0 \\)."
+          },
+          {
+            title: "Step 2: Solve for x",
+            prompt: "Add 4 to both sides: \\( x = \\) <input class='step-input' style='width:60px;' data-ans='4'>",
+            explanation: "\\( x = 4 \\)."
+          }
+        ]
+      },
+      // Q2 (Image 1, #17)
+      {
+        id: 2,
+        title: "Question 2",
+        category: "Basic Equations",
+        partsInfo: "2 Steps Required",
+        context: "Solve the linear equation: \\[ 7x = 8x + 12 \\]",
+        steps: [
+          {
+            title: "Step 1: Collect Variable Terms",
+            prompt: "Subtract \\( 8x \\) from both sides: \\( 7x - 8x = -x = 12 \\).",
+            explanation: "\\( -x = 12 \\)."
+          },
+          {
+            title: "Step 2: Solve for x",
+            prompt: "Divide by -1: \\( x = \\) <input class='step-input' style='width:60px;' data-ans='-12'>",
+            explanation: "\\( x = -12 \\)."
+          }
+        ]
+      },
+      // Q3 (Image 1, #18)
+      {
+        id: 3,
+        title: "Question 3",
+        category: "Basic Equations",
+        partsInfo: "2 Steps Required",
+        context: "Solve the linear equation: \\[ 27 - 3x = 3x + 27 \\]",
+        steps: [
+          {
+            title: "Step 1: Collect Variable Terms",
+            prompt: "Add \\( 3x \\) to both sides: \\( 27 = 6x + 27 \\implies 6x = 27 - 27 = \\) <input class='step-input' style='width:50px;' data-ans='0'>",
+            explanation: "\\( 6x = 0 \\)."
+          },
+          {
+            title: "Step 2: Solve for x",
+            prompt: "Divide by 6: \\( x = \\) <input class='step-input' style='width:50px;' data-ans='0'>",
+            explanation: "\\( x = 0 \\)."
+          }
+        ]
+      },
+      // Q4 (Image 1, #19)
+      {
+        id: 4,
+        title: "Question 4",
+        category: "Basic Equations",
+        partsInfo: "2 Steps Required",
+        context: "Solve the linear equation: \\[ 34 - 2x = 7x \\]",
+        steps: [
+          {
+            title: "Step 1: Add 2x to Both Sides",
+            prompt: "\\( 34 = 7x + 2x = \\) <input class='step-input' style='width:50px;' data-ans='9'> \\( x \\)",
+            explanation: "\\( 34 = 9x \\)."
+          },
+          {
+            title: "Step 2: Solve for x",
+            prompt: "Divide by 9: \\( x = \\) <input class='step-input' style='width:80px;' data-ans='34/9' data-alt='3.78|3.778'>",
+            explanation: "\\( x = \\frac{34}{9} \\approx 3.78 \\)."
+          }
+        ]
+      },
+      // Q5 (Image 1, #20)
+      {
+        id: 5,
+        title: "Question 5",
+        category: "Two-Step Variables",
+        partsInfo: "2 Steps Required",
+        context: "Solve the linear equation: \\[ 5r - 7 = 2r + 14 \\]",
+        steps: [
+          {
+            title: "Step 1: Collect Variable and Constant Terms",
+            prompt: "\\( 5r - 2r = 14 + 7 \\implies 3r = \\) <input class='step-input' style='width:60px;' data-ans='21'>",
+            explanation: "\\( 3r = 21 \\)."
+          },
+          {
+            title: "Step 2: Solve for r",
+            prompt: "Divide by 3: \\( r = \\) <input class='step-input' style='width:50px;' data-ans='7'>",
+            explanation: "\\( r = 7 \\)."
+          }
+        ]
+      },
+      // Q6 (Image 1, #21)
+      {
+        id: 6,
+        title: "Question 6",
+        category: "Two-Step Variables",
+        partsInfo: "2 Steps Required",
+        context: "Solve the linear equation: \\[ -x = 7x - 56 \\]",
+        steps: [
+          {
+            title: "Step 1: Subtract 7x from Both Sides",
+            prompt: "\\( -x - 7x = -56 \\implies -8x = -56 \\).",
+            explanation: "\\( -8x = -56 \\)."
+          },
+          {
+            title: "Step 2: Solve for x",
+            prompt: "Divide by -8: \\( x = \\frac{-56}{-8} = \\) <input class='step-input' style='width:50px;' data-ans='7'>",
+            explanation: "\\( x = 7 \\)."
+          }
+        ]
+      },
+      // Q7 (Image 1, #22)
+      {
+        id: 7,
+        title: "Question 7",
+        category: "Distributive Equations",
+        partsInfo: "3 Steps Required",
+        context: "Solve the linear equation: \\[ 5(n - 7) = 2(n + 14) \\]",
+        steps: [
+          {
+            title: "Step 1: Expand Both Sides",
+            prompt: "\\( 5n - 35 = 2n + \\) <input class='step-input' style='width:50px;' data-ans='28'>",
+            explanation: "\\( 5n - 35 = 2n + 28 \\)."
+          },
+          {
+            title: "Step 2: Collect Variable and Constant Terms",
+            prompt: "\\( 5n - 2n = 28 + 35 \\implies 3n = \\) <input class='step-input' style='width:60px;' data-ans='63'>",
+            explanation: "\\( 3n = 63 \\)."
+          },
+          {
+            title: "Step 3: Solve for n",
+            prompt: "Divide by 3: \\( n = \\) <input class='step-input' style='width:50px;' data-ans='21'>",
+            explanation: "\\( n = 21 \\)."
+          }
+        ]
+      },
+      // Q8 (Image 1, #23)
+      {
+        id: 8,
+        title: "Question 8",
+        category: "Distributive Equations",
+        partsInfo: "3 Steps Required",
+        context: "Solve the linear equation: \\[ 6w - 33 = 3(4w - 5) \\]",
+        steps: [
+          {
+            title: "Step 1: Distribute 3 on the Right",
+            prompt: "\\( 6w - 33 = 12w - \\) <input class='step-input' style='width:50px;' data-ans='15'>",
+            explanation: "\\( 6w - 33 = 12w - 15 \\)."
+          },
+          {
+            title: "Step 2: Collect Terms",
+            prompt: "\\( 6w - 12w = -15 + 33 \\implies -6w = \\) <input class='step-input' style='width:50px;' data-ans='18'>",
+            explanation: "\\( -6w = 18 \\)."
+          },
+          {
+            title: "Step 3: Solve for w",
+            prompt: "Divide by -6: \\( w = \\) <input class='step-input' style='width:50px;' data-ans='-3'>",
+            explanation: "\\( w = -3 \\)."
+          }
+        ]
+      },
+      // Q9 (Image 1, #24)
+      {
+        id: 9,
+        title: "Question 9",
+        category: "Distributive Equations",
+        partsInfo: "2 Steps Required",
+        context: "Solve the linear equation: \\[ 3(x - 2) = 9x \\]",
+        steps: [
+          {
+            title: "Step 1: Expand and Collect Variables",
+            prompt: "\\( 3x - 6 = 9x \\implies 3x - 9x = 6 \\implies -6x = \\) <input class='step-input' style='width:50px;' data-ans='6'>",
+            explanation: "\\( -6x = 6 \\)."
+          },
+          {
+            title: "Step 2: Solve for x",
+            prompt: "Divide by -6: \\( x = \\) <input class='step-input' style='width:50px;' data-ans='-1'>",
+            explanation: "\\( x = -1 \\)."
+          }
+        ]
+      },
+      // Q10 (Image 1, #25)
+      {
+        id: 10,
+        title: "Question 10",
+        category: "Distributive Equations",
+        partsInfo: "2 Steps Required",
+        context: "Solve the linear equation: \\[ 6(x + 5) = 3x \\]",
+        steps: [
+          {
+            title: "Step 1: Expand and Collect Variables",
+            prompt: "\\( 6x + 30 = 3x \\implies 6x - 3x = -30 \\implies 3x = \\) <input class='step-input' style='width:60px;' data-ans='-30'>",
+            explanation: "\\( 3x = -30 \\)."
+          },
+          {
+            title: "Step 2: Solve for x",
+            prompt: "Divide by 3: \\( x = \\) <input class='step-input' style='width:60px;' data-ans='-10'>",
+            explanation: "\\( x = -10 \\)."
+          }
+        ]
+      },
+      // Q11 (Image 1, #26)
+      {
+        id: 11,
+        title: "Question 11",
+        category: "Rational Equations",
+        partsInfo: "2 Steps Required",
+        context: "Solve the linear equation: \\[ \\frac{4x + 6}{2} = \\frac{3x - 15}{3} \\]",
+        steps: [
+          {
+            title: "Step 1: Simplify Each Fraction Individually",
+            prompt: "Left side: \\( \\frac{4x+6}{2} = 2x + 3 \\). Right side: \\( \\frac{3x-15}{3} = x - \\) <input class='step-input' style='width:50px;' data-ans='5'>",
+            explanation: "\\( 2x + 3 = x - 5 \\)."
+          },
+          {
+            title: "Step 2: Solve for x",
+            prompt: "\\( 2x - x = -5 - 3 \\implies x = \\) <input class='step-input' style='width:60px;' data-ans='-8'>",
+            explanation: "\\( x = -8 \\)."
+          }
+        ]
+      },
+      // Q12 (Image 1, #27)
+      {
+        id: 12,
+        title: "Question 12",
+        category: "Rational Equations",
+        partsInfo: "3 Steps Required",
+        context: "Solve the linear equation: \\[ \\frac{q + 1}{2} = \\frac{q - 1}{3} \\]",
+        steps: [
+          {
+            title: "Step 1: Cross-Multiply",
+            prompt: "\\( 3(q + 1) = 2(q - 1) \\implies 3q + 3 = 2q - \\) <input class='step-input' style='width:50px;' data-ans='2'>",
+            explanation: "\\( 3q + 3 = 2q - 2 \\)."
+          },
+          {
+            title: "Step 2: Collect Variables and Constants",
+            prompt: "\\( 3q - 2q = -2 - 3 \\implies q = \\) <input class='step-input' style='width:60px;' data-ans='-5'>",
+            explanation: "\\( q = -5 \\)."
+          }
+        ]
+      },
+      // Q13 (Image 1, #28)
+      {
+        id: 13,
+        title: "Question 13",
+        category: "Special Solutions",
+        partsInfo: "2 Steps Required",
+        context: "Solve the linear equation: \\[ 2c + 3 = 2c + 3 \\]",
+        steps: [
+          {
+            title: "Step 1: Subtract 2c from Both Sides",
+            prompt: "\\( 3 = \\) <input class='step-input' style='width:50px;' data-ans='3'>",
+            explanation: "\\( 3 = 3 \\)."
+          },
+          {
+            title: "Step 2: Classify the Solution",
+            prompt: "Since this is an identity true for all numbers, enter 'Identity' or 'Infinitely many solutions': <input class='step-input' style='width:160px;' data-ans='Identity' data-alt='infinitely many solutions|all real numbers'>",
+            explanation: "There are infinitely many solutions (an identity)."
+          }
+        ]
+      },
+      // Q14 (Image 1, #29)
+      {
+        id: 14,
+        title: "Question 14",
+        category: "Special Solutions",
+        partsInfo: "2 Steps Required",
+        context: "Solve the linear equation: \\[ 12b + 9 = 12b + 11 \\]",
+        steps: [
+          {
+            title: "Step 1: Subtract 12b from Both Sides",
+            prompt: "\\( 9 = 11 \\). Is this numerical statement true? Enter 'Yes' or 'No': <input class='step-input' style='width:60px;' data-ans='No' data-alt='no'>",
+            explanation: "9 = 11 is a false statement."
+          },
+          {
+            title: "Step 2: Classify the Solution",
+            prompt: "Enter 'No solution': <input class='step-input' style='width:120px;' data-ans='No solution' data-alt='no solution|none'>",
+            explanation: "No solution."
+          }
+        ]
+      },
+      // Q15 (Image 1, #30)
+      {
+        id: 15,
+        title: "Question 15",
+        category: "Special Solutions",
+        partsInfo: "2 Steps Required",
+        context: "Solve the linear equation: \\[ x - 27 = -(27 - x) \\]",
+        steps: [
+          {
+            title: "Step 1: Distribute the Negative Sign",
+            prompt: "\\( -(27 - x) = -27 + x = x - \\) <input class='step-input' style='width:50px;' data-ans='27'>",
+            explanation: "\\( x - 27 = x - 27 \\)."
+          },
+          {
+            title: "Step 2: Classify the Solution",
+            prompt: "Enter 'Identity' or 'Infinitely many solutions': <input class='step-input' style='width:160px;' data-ans='Identity' data-alt='infinitely many solutions|all real numbers'>",
+            explanation: "Identity (infinitely many solutions)."
+          }
+        ]
+      },
+      // Q16 (Image 1, #31)
+      {
+        id: 16,
+        title: "Question 16",
+        category: "Distributive Equations",
+        partsInfo: "2 Steps Required",
+        context: "Solve the linear equation: \\[ 4(x + 9) = x + 9 \\]",
+        steps: [
+          {
+            title: "Step 1: Distribute 4",
+            prompt: "\\( 4x + 36 = x + 9 \\implies 4x - x = 9 - 36 \\implies 3x = \\) <input class='step-input' style='width:60px;' data-ans='-27'>",
+            explanation: "\\( 3x = -27 \\)."
+          },
+          {
+            title: "Step 2: Solve for x",
+            prompt: "Divide by 3: \\( x = \\) <input class='step-input' style='width:50px;' data-ans='-9'>",
+            explanation: "\\( x = -9 \\)."
+          }
+        ]
+      },
+      // Q17 (Image 1, #32)
+      {
+        id: 17,
+        title: "Question 17",
+        category: "Special Solutions",
+        partsInfo: "3 Steps Required",
+        context: "Solve the linear equation: \\[ 16(4 - 3m) = 96\\left(-\\frac{m}{2} + 1\\right) \\]",
+        steps: [
+          {
+            title: "Step 1: Divide Both Sides by 16",
+            prompt: "\\( 4 - 3m = \\frac{96}{16}\\left(-\\frac{m}{2} + 1\\right) = 6\\left(-\\frac{m}{2} + 1\\right) \\).",
+            explanation: "\\( 4 - 3m = 6(-\\frac{m}{2} + 1) \\)."
+          },
+          {
+            title: "Step 2: Distribute 6",
+            prompt: "\\( 6\\left(-\\frac{m}{2}\\right) + 6(1) = -3m + \\) <input class='step-input' style='width:50px;' data-ans='6'>",
+            explanation: "\\( 4 - 3m = -3m + 6 \\)."
+          },
+          {
+            title: "Step 3: Classify the Solution",
+            prompt: "Adding \\( 3m \\) gives \\( 4 = 6 \\). Enter 'No solution': <input class='step-input' style='width:120px;' data-ans='No solution' data-alt='no solution|none'>",
+            explanation: "No solution."
+          }
+        ]
+      },
+      // Q18 (Image 1, #33)
+      {
+        id: 18,
+        title: "Question 18",
+        category: "Special Solutions",
+        partsInfo: "2 Steps Required",
+        context: "Solve the linear equation: \\[ 6y - 8 = 2(3y - 4) \\]",
+        steps: [
+          {
+            title: "Step 1: Distribute 2 on the Right",
+            prompt: "\\( 2(3y - 4) = 6y - \\) <input class='step-input' style='width:50px;' data-ans='8'>",
+            explanation: "\\( 6y - 8 = 6y - 8 \\)."
+          },
+          {
+            title: "Step 2: Classify the Solution",
+            prompt: "Enter 'Identity' or 'Infinitely many solutions': <input class='step-input' style='width:160px;' data-ans='Identity' data-alt='infinitely many solutions|all real numbers'>",
+            explanation: "Identity (infinitely many solutions)."
+          }
+        ]
+      },
+      // Q19 (Image 1, #34)
+      {
+        id: 19,
+        title: "Question 19",
+        category: "Special Solutions",
+        partsInfo: "2 Steps Required",
+        context: "Solve the linear equation: \\[ 5(5t + 1) = 25t - 7 \\]",
+        steps: [
+          {
+            title: "Step 1: Distribute 5",
+            prompt: "\\( 25t + 5 = 25t - 7 \\). Subtracting \\( 25t \\) leaves \\( 5 = -7 \\).",
+            explanation: "\\( 5 = -7 \\) is a false statement."
+          },
+          {
+            title: "Step 2: Classify the Solution",
+            prompt: "Enter 'No solution': <input class='step-input' style='width:120px;' data-ans='No solution' data-alt='no solution|none'>",
+            explanation: "No solution."
+          }
+        ]
+      },
+      // Q20 (Image 1, #35)
+      {
+        id: 20,
+        title: "Question 20",
+        category: "Linear Equations",
+        partsInfo: "2 Steps Required",
+        context: "Solve the linear equation: \\[ -3k + 4 = -2 - 6k \\]",
+        steps: [
+          {
+            title: "Step 1: Collect Variable Terms",
+            prompt: "Add \\( 6k \\) and subtract 4: \\( -3k + 6k = -2 - 4 \\implies 3k = \\) <input class='step-input' style='width:60px;' data-ans='-6'>",
+            explanation: "\\( 3k = -6 \\)."
+          },
+          {
+            title: "Step 2: Solve for k",
+            prompt: "Divide by 3: \\( k = \\) <input class='step-input' style='width:50px;' data-ans='-2'>",
+            explanation: "\\( k = -2 \\)."
+          }
+        ]
+      },
+      // Q21 (Image 1, #36)
+      {
+        id: 21,
+        title: "Question 21",
+        category: "Nested Distribution",
+        partsInfo: "3 Steps Required",
+        context: "Solve the linear equation: \\[ \\frac{1}{4}(2(x - 1) + 10) = x \\]",
+        steps: [
+          {
+            title: "Step 1: Simplify Inside Parentheses",
+            prompt: "\\( 2(x - 1) + 10 = 2x - 2 + 10 = 2x + \\) <input class='step-input' style='width:50px;' data-ans='8'>",
+            explanation: "\\( 2x + 8 \\)."
+          },
+          {
+            title: "Step 2: Multiply by 1/4",
+            prompt: "\\( \\frac{1}{4}(2x + 8) = \\frac{1}{2}x + \\) <input class='step-input' style='width:50px;' data-ans='2'> \\( = x \\)",
+            explanation: "\\( \\frac{1}{2}x + 2 = x \\)."
+          },
+          {
+            title: "Step 3: Solve for x",
+            prompt: "\\( x - \\frac{1}{2}x = 2 \\implies \\frac{1}{2}x = 2 \\implies x = \\) <input class='step-input' style='width:50px;' data-ans='4'>",
+            explanation: "\\( x = 4 \\)."
+          }
+        ]
+      },
+      // Q22 (Image 1, #37)
+      {
+        id: 22,
+        title: "Question 22",
+        category: "Fraction Equations",
+        partsInfo: "2 Steps Required",
+        context: "Solve the linear equation: \\[ \\frac{6x + 8}{2} - 4 = 3x \\]",
+        steps: [
+          {
+            title: "Step 1: Simplify the Left Side",
+            prompt: "\\( (3x + 4) - 4 = \\) <input class='step-input' style='width:50px;' data-ans='3x'>",
+            explanation: "\\( 3x + 4 - 4 = 3x \\)."
+          },
+          {
+            title: "Step 2: Classify the Solution",
+            prompt: "Since \\( 3x = 3x \\), enter 'Identity' or 'Infinitely many solutions': <input class='step-input' style='width:160px;' data-ans='Identity' data-alt='infinitely many solutions|all real numbers'>",
+            explanation: "Identity (infinitely many solutions)."
+          }
+        ]
+      },
+      // Q23 (Image 1, #38)
+      {
+        id: 23,
+        title: "Question 23",
+        category: "Fraction Equations",
+        partsInfo: "3 Steps Required",
+        context: "Solve the linear equation: \\[ 3y = \\frac{8 - 12y}{4} + 2 \\]",
+        steps: [
+          {
+            title: "Step 1: Simplify the Fraction Term",
+            prompt: "\\( \\frac{8 - 12y}{4} = 2 - \\) <input class='step-input' style='width:50px;' data-ans='3y'>",
+            explanation: "\\( 2 - 3y \\)."
+          },
+          {
+            title: "Step 2: Combine Constants on the Right",
+            prompt: "\\( 3y = (2 - 3y) + 2 = 4 - 3y \\implies 3y + 3y = \\) <input class='step-input' style='width:50px;' data-ans='4'>",
+            explanation: "\\( 6y = 4 \\)."
+          },
+          {
+            title: "Step 3: Solve for y in Simplest Form",
+            prompt: "Divide by 6: \\( y = \\frac{4}{6} = \\) <input class='step-input' style='width:70px;' data-ans='2/3' data-alt='0.67|0.667'>",
+            explanation: "\\( y = \\frac{2}{3} \\)."
+          }
+        ]
+      },
+      // Q24 (Image 1, #39)
+      {
+        id: 24,
+        title: "Question 24",
+        category: "Decimal Equations",
+        partsInfo: "2 Steps Required",
+        context: "Solve the linear equation: \\[ 0.25t = 0.25 - t \\]",
+        steps: [
+          {
+            title: "Step 1: Add t to Both Sides",
+            prompt: "\\( 0.25t + 1t = \\) <input class='step-input' style='width:70px;' data-ans='1.25'> \\( t = 0.25 \\)",
+            explanation: "\\( 1.25t = 0.25 \\)."
+          },
+          {
+            title: "Step 2: Solve for t",
+            prompt: "Divide by 1.25: \\( t = \\frac{0.25}{1.25} = \\) <input class='step-input' style='width:70px;' data-ans='0.2' data-alt='1/5'>",
+            explanation: "\\( t = 0.2 \\) (or \\( \\frac{1}{5} \\))."
+          }
+        ]
+      },
+      // Q25 (Image 1, #40)
+      {
+        id: 25,
+        title: "Question 25",
+        category: "Decimal Equations",
+        partsInfo: "3 Steps Required",
+        context: "Solve the linear equation: \\[ 0.625(x + 10) - 10 = 0 \\]",
+        steps: [
+          {
+            title: "Step 1: Add 10 to Both Sides",
+            prompt: "\\( 0.625(x + 10) = \\) <input class='step-input' style='width:50px;' data-ans='10'>",
+            explanation: "\\( 0.625(x + 10) = 10 \\)."
+          },
+          {
+            title: "Step 2: Divide Both Sides by 0.625",
+            prompt: "\\( x + 10 = \\frac{10}{0.625} = \\) <input class='step-input' style='width:60px;' data-ans='16'>",
+            explanation: "\\( 10 \\div 0.625 = 16 \\)."
+          },
+          {
+            title: "Step 3: Solve for x",
+            prompt: "\\( x = 16 - 10 = \\) <input class='step-input' style='width:50px;' data-ans='6'>",
+            explanation: "\\( x = 6 \\)."
+          }
+        ]
+      },
+      // Q26 (Image 2, #41 - Tavon's Gift Cards)
+      {
+        id: 26,
+        title: "Question 26",
+        category: "Word Problem Modeling",
+        partsInfo: "4 Steps Required",
+        context: "Tavon has a $50 gift card that loses $2 for each 30-day period it is not used. He has a $40 card that loses $1.50 for each 30-day period it is not used.",
+        steps: [
+          {
+            title: "Step 1: Write the Depreciation Expressions",
+            prompt: "Let \\( p \\) be the number of 30-day periods. Value of card 1 is \\( 50 - 2p \\). Value of card 2 is \\( 40 - \\) <input class='step-input' style='width:70px;' data-ans='1.5p' data-alt='1.50p'>",
+            explanation: "\\( 40 - 1.50p \\)."
+          },
+          {
+            title: "Step 2: Set Up the Equal-Value Equation",
+            prompt: "\\( 50 - 2p = 40 - 1.5p \\implies 50 - 40 = 2p - 1.5p \\implies 10 = \\) <input class='step-input' style='width:60px;' data-ans='0.5p'>",
+            explanation: "\\( 10 = 0.5p \\)."
+          },
+          {
+            title: "Step 3: Part A - Solve for Number of 30-Day Periods",
+            prompt: "Divide by 0.5: \\( p = \\frac{10}{0.5} = \\) <input class='step-input' style='width:60px;' data-ans='20'> periods",
+            explanation: "\\( p = 20 \\) periods."
+          },
+          {
+            title: "Step 4: Part B - Determine Equal Dollar Value of the Cards",
+            prompt: "Substitute \\( p = 20 \\) into \\( 50 - 2(20) = \\$ \\) <input class='step-input' style='width:60px;' data-ans='10'>",
+            explanation: "\\( 50 - 40 = \\$10 \\)."
+          }
+        ]
+      },
+      // Q27 (Image 2, #42 - Cereal Box Manufacturer)
+      {
+        id: 27,
+        title: "Question 27",
+        category: "Word Problem Modeling",
+        partsInfo: "3 Steps Required",
+        context: "A cereal manufacturer increases box sizes. The equations \\( 12 + 7.6n \\) and \\( 6 + 8n \\), where \\( n \\) is the number of smaller boxes, both represent the amount of cereal in the larger box.",
+        steps: [
+          {
+            title: "Step 1: Set Up the Equivalence Equation",
+            prompt: "\\( 12 + 7.6n = 6 + 8n \\implies 12 - 6 = 8n - 7.6n \\implies 6 = \\) <input class='step-input' style='width:60px;' data-ans='0.4n'>",
+            explanation: "\\( 6 = 0.4n \\)."
+          },
+          {
+            title: "Step 2: Solve for Number of Smaller Boxes (n)",
+            prompt: "Divide by 0.4: \\( n = \\frac{6}{0.4} = \\) <input class='step-input' style='width:60px;' data-ans='15'>",
+            explanation: "\\( n = 15 \\) boxes."
+          },
+          {
+            title: "Step 3: Verify the Total Cereal Capacity",
+            prompt: "Calculate larger box ounces: \\( 6 + 8(15) = 6 + 120 = \\) <input class='step-input' style='width:60px;' data-ans='126'> oz",
+            explanation: "Both formulas yield 126 oz."
+          }
+        ]
+      },
+      // Q28 (Image 3, #43 - Florida Sales Tax)
+      {
+        id: 28,
+        title: "Question 28",
+        category: "Mathematical Modeling",
+        partsInfo: "3 Steps Required",
+        context: "Arthur buys an item costing \\( p \\) dollars before tax. Florida sales tax is 6%.",
+        steps: [
+          {
+            title: "Step 1: Expression 1 (Original Price + Tax Amount)",
+            prompt: "With 6% tax, Expression 1 is \\( p + \\) <input class='step-input' style='width:80px;' data-ans='0.06p'>",
+            explanation: "\\( p + 0.06p \\)."
+          },
+          {
+            title: "Step 2: Expression 2 (Single Multiplier Form)",
+            prompt: "Combining terms \\( (1 + 0.06)p \\) gives: <input class='step-input' style='width:80px;' data-ans='1.06p'>",
+            explanation: "\\( 1.06p \\)."
+          },
+          {
+            title: "Step 3: Prove Equality",
+            prompt: "Factoring \\( p \\) from \\( p + 0.06p = p(1 + 0.06) = 1.06p \\). Are both expressions equal? Enter 'Yes' or 'No': <input class='step-input' style='width:60px;' data-ans='Yes' data-alt='yes'>",
+            explanation: "Yes, by the distributive property they represent the exact same total."
+          }
+        ]
+      },
+      // Q29 (Image 3, #44 - Window Washers)
+      {
+        id: 29,
+        title: "Question 29",
+        category: "Rates & Motion",
+        partsInfo: "4 Steps Required",
+        context: "Two window washers start at different heights. Washer 1 starts at 21 ft. high and rises at 8 in./s. Washer 2 starts at 50 ft. high and descends at 11 in./s.",
+        steps: [
+          {
+            title: "Step 1: Convert Starting Heights to Inches",
+            prompt: "• Washer 1: \\( 21 \\text{ ft} \\times 12 = \\) <input class='step-input' style='width:60px;' data-ans='252'> in.<br>• Washer 2: \\( 50 \\text{ ft} \\times 12 = \\) <input class='step-input' style='width:60px;' data-ans='600'> in.",
+            explanation: "252 inches and 600 inches."
+          },
+          {
+            title: "Step 2: Formulate the Time Equation",
+            prompt: "Let \\( t \\) be seconds: \\( 252 + 8t = 600 - 11t \\implies 8t + 11t = 600 - 252 \\implies 19t = \\) <input class='step-input' style='width:60px;' data-ans='348'>",
+            explanation: "\\( 19t = 348 \\)."
+          },
+          {
+            title: "Step 3: Solve for Time t",
+            prompt: "Divide by 19: \\( t = \\frac{348}{19} \\approx \\) <input class='step-input' style='width:80px;' data-ans='18.32' data-alt='348/19|18.3'> seconds",
+            explanation: "\\( t = \\frac{348}{19} \\approx 18.32 \\) seconds."
+          },
+          {
+            title: "Step 4: Find the Common Height in Feet",
+            prompt: "Height in inches = \\( 252 + 8(18.316) \\approx 398.53 \\text{ in.} \\approx \\) <input class='step-input' style='width:70px;' data-ans='33.21' data-alt='33.2'> ft",
+            explanation: "\\( \\frac{398.53}{12} \\approx 33.21 \\) feet."
+          }
+        ]
+      },
+      // Q30 (Image 3, #45 - Catering Companies)
+      {
+        id: 30,
+        title: "Question 30",
+        category: "Cost Optimization",
+        partsInfo: "4 Steps Required",
+        context: "Jamie chooses between catering companies for \\( g \\) guests.<br>• Company A: $500 set-up fee + $25/guest.<br>• Company B: $200 set-up fee + $30/guest.",
+        steps: [
+          {
+            title: "Step 1: Part A - Write Cost Expressions",
+            prompt: "Company A charge is \\( 500 + 25g \\). Company B charge is \\( 200 + \\) <input class='step-input' style='width:70px;' data-ans='30g'>",
+            explanation: "\\( 200 + 30g \\)."
+          },
+          {
+            title: "Step 2: Part B - Company A Includes 20 Guests in Setup Fee",
+            prompt: "For \\( g = 50 \\), guests over 20 is \\( 50 - 20 = 30 \\). Company A cost: \\( 500 + 25(30) = 500 + 750 = \\$ \\) <input class='step-input' style='width:70px;' data-ans='1250'>",
+            explanation: "\\( \\$1,250 \\)."
+          },
+          {
+            title: "Step 3: Part B - Calculate Company B Cost for 50 Guests",
+            prompt: "Company B cost: \\( 200 + 30(50) = 200 + 1500 = \\$ \\) <input class='step-input' style='width:70px;' data-ans='1700'>",
+            explanation: "\\( \\$1,700 \\)."
+          },
+          {
+            title: "Step 4: Which Company Costs Least?",
+            prompt: "Comparing $1,250 to $1,700, which company costs less? Enter 'Company A' or 'Company B': <input class='step-input' style='width:120px;' data-ans='Company A' data-alt='company a|a'>",
+            explanation: "Company A costs $450 less."
+          }
+        ]
+      },
+      // Q31 (Image 3, #46 - Gym Memberships)
+      {
+        id: 31,
+        title: "Question 31",
+        category: "Membership Cost Analysis",
+        partsInfo: "4 Steps Required",
+        context: "Gym A costs $250 for year 1 plus $19/mo in year 2. Gym B costs $195 for year 1 plus $24/mo in year 2. Leah says costs will be equal after month 11 of year 2.",
+        steps: [
+          {
+            title: "Step 1: Formulate the Two-Year Cost Equations",
+            prompt: "Let \\( m \\) be months into year 2. Cost A is \\( 250 + 19m \\). Cost B is \\( 195 + \\) <input class='step-input' style='width:70px;' data-ans='24m'>",
+            explanation: "\\( 195 + 24m \\)."
+          },
+          {
+            title: "Step 2: Solve for Equal Cost Month m",
+            prompt: "\\( 250 + 19m = 195 + 24m \\implies 250 - 195 = 24m - 19m \\implies 55 = 5m \\implies m = \\) <input class='step-input' style='width:50px;' data-ans='11'>",
+            explanation: "\\( m = 11 \\) months."
+          },
+          {
+            title: "Step 3: Check Leah's Statement",
+            prompt: "Do you agree with Leah? Enter 'Yes' or 'No': <input class='step-input' style='width:60px;' data-ans='Yes' data-alt='yes'>",
+            explanation: "Yes, exactly after 11 months."
+          },
+          {
+            title: "Step 4: Verify Both Costs at Month 11",
+            prompt: "Total cost for each gym at month 11 is \\( 250 + 19(11) = \\$ \\) <input class='step-input' style='width:60px;' data-ans='459'>",
+            explanation: "\\( \\$459 \\)."
+          }
+        ]
+      },
+      // Q32 (Image 3, #47 - Balloons Motion)
+      {
+        id: 32,
+        title: "Question 32",
+        category: "Rates & Motion",
+        partsInfo: "3 Steps Required",
+        context: "A red balloon is 40 ft above ground and rising at 2 ft/s. At the same time, a blue balloon is 60 ft above ground and descending at 3 ft/s.",
+        steps: [
+          {
+            title: "Step 1: Set Up Height Equations",
+            prompt: "Let \\( t \\) be seconds: \\( 40 + 2t = 60 - 3t \\implies 2t + 3t = 60 - 40 \\implies 5t = \\) <input class='step-input' style='width:50px;' data-ans='20'>",
+            explanation: "\\( 5t = 20 \\)."
+          },
+          {
+            title: "Step 2: Solve for Time t",
+            prompt: "Divide by 5: \\( t = \\) <input class='step-input' style='width:50px;' data-ans='4'> seconds",
+            explanation: "\\( t = 4 \\) seconds."
+          },
+          {
+            title: "Step 3: Calculate the Meeting Height",
+            prompt: "Height = \\( 40 + 2(4) = \\) <input class='step-input' style='width:60px;' data-ans='48'> feet",
+            explanation: "\\( 40 + 8 = 48 \\) feet (also \\( 60 - 3(4) = 48 \\) ft)."
+          }
+        ]
+      },
+      // Q33 (Image 3, #48 - No Solution Classification)
+      {
+        id: 33,
+        title: "Question 33",
+        category: "Assessment Practice",
+        partsInfo: "2 Steps Required",
+        context: "Which equations have no solution? Select all that apply:<br>A. \\( x - 9 = 2(x - 3) + 12 \\)<br>B. \\( 5(-2x + 7) + 3 = -10x + 38 \\)<br>C. \\( \\frac{1}{2}(6x - 4) = 3(x - 2) \\)<br>D. \\( 0.01x + 0.001 = \\frac{1}{100}(x + 10) \\)<br>E. \\( 3(x + 2) + 1 = x + 2(4 + x) \\)",
+        steps: [
+          {
+            title: "Step 1: Simplify Each Option",
+            prompt: "• C reduces to \\( 3x - 2 = 3x - 6 \\implies -2 = -6 \\) (false).<br>• D reduces to \\( 0.01x + 0.001 = 0.01x + 0.1 \\implies 0.001 = 0.1 \\) (false).<br>• E reduces to \\( 3x + 7 = 3x + 8 \\implies 7 = 8 \\) (false).",
+            explanation: "Options C, D, and E all produce false numerical statements."
+          },
+          {
+            title: "Step 2: Enter the Letters for No Solution",
+            prompt: "Enter letters (comma-separated, e.g. C, D, E): <input class='step-input' style='width:120px;' data-ans='C, D, E' data-alt='C,D,E|C D E|C, D, E'>",
+            explanation: "C, D, and E."
+          }
+        ]
+      },
+      // Q34 (Image 3, #49 - SAT/ACT Identity)
+      {
+        id: 34,
+        title: "Question 34",
+        category: "SAT/ACT Practice",
+        partsInfo: "2 Steps Required",
+        context: "Which equation is an identity?<br>A. \\( \\frac{9x}{15} + 27 = \\frac{9x}{15} + \\frac{27}{15} \\)<br>B. \\( 3\\left(\\frac{x}{5} + 16\\right) - 16 = \\frac{3}{5}x \\)<br>C. \\( -4(3 - 2x) = -12 - 8x \\)<br>D. \\( -5\\left(\\frac{x}{15} - 16\\right) - 30 = 50 - \\frac{1}{3}x \\)<br>E. \\( 36\\left(\\frac{3}{4}x - 2\\right) + 72 = -72 + 27x \\)",
+        steps: [
+          {
+            title: "Step 1: Expand Option D",
+            prompt: "\\( -5\\left(\\frac{x}{15}\\right) - 5(-16) - 30 = -\\frac{1}{3}x + 80 - 30 = 50 - \\frac{1}{3}x \\). Does left equal right? Enter 'Yes' or 'No': <input class='step-input' style='width:60px;' data-ans='Yes' data-alt='yes'>",
+            explanation: "Yes, left side simplifies identically to \\( 50 - \\frac{1}{3}x \\)."
+          },
+          {
+            title: "Step 2: Select Correct Letter",
+            prompt: "Which choice is the identity? <input class='step-input' style='width:50px;' data-ans='D' data-alt='d'>",
+            explanation: "Option D is an identity."
+          }
+        ]
+      },
+      // Q35 (Image 3, #50 - Performance Task Fence Painting)
+      {
+        id: 35,
+        title: "Question 35",
+        category: "Performance Task",
+        partsInfo: "5 Steps Required",
+        context: "Benito and Tyler paint opposite sides of a 150-ft fence. Tyler paints 19.5 ft before Benito starts. Benito's rate = 15 ft/min; Tyler's rate = 11 ft/min.",
+        steps: [
+          {
+            title: "Step 1: Part A - Time for Equal Length Painted",
+            prompt: "Let \\( t \\) be minutes after Benito starts: \\( 15t = 19.5 + 11t \\implies 4t = 19.5 \\implies t = \\) <input class='step-input' style='width:70px;' data-ans='4.875' data-alt='39/8'> min",
+            explanation: "\\( t = 4.875 \\) minutes."
+          },
+          {
+            title: "Step 2: Part A - Feet Painted on Benito's Side at Equality",
+            prompt: "Distance = \\( 15 \\times 4.875 = \\) <input class='step-input' style='width:80px;' data-ans='73.125' data-alt='585/8|73 1/8'> ft",
+            explanation: "\\( 73.125 \\) feet."
+          },
+          {
+            title: "Step 3: Part B - Total Time for Benito to Finish 150 ft",
+            prompt: "\\( 150 \\div 15 = \\) <input class='step-input' style='width:60px;' data-ans='10'> minutes",
+            explanation: "\\( 10 \\) minutes."
+          },
+          {
+            title: "Step 4: Part B - Time for Tyler to Finish Remaining 130.5 ft",
+            prompt: "\\( 130.5 \\div 11 \\approx \\) <input class='step-input' style='width:70px;' data-ans='11.86' data-alt='11.864|261/22'> minutes",
+            explanation: "\\( 11.86 \\) minutes after Benito starts."
+          },
+          {
+            title: "Step 5: Part C - Rest Time for the First Finisher",
+            prompt: "Benito finishes first and rests while Tyler finishes. Rest time = \\( 11.864 - 10 = \\) <input class='step-input' style='width:70px;' data-ans='1.86' data-alt='41/22|1.864'> min",
+            explanation: "\\( 1.86 \\) minutes (approx. 1 min 52 sec)."
+          }
+        ]
+      }
+    ];
+
+    /* ==========================================================================
+       STOPWATCH / TIMER WITH 20-MIN & 5-MIN SOUND REMINDERS
+       ========================================================================== */
+    let timerSeconds = 0;
+    let timerInterval = null;
+    let timerRunning = false;
+
+    function formatTime(totalSecs) {
+      const mins = Math.floor(totalSecs / 60);
+      const secs = totalSecs % 60;
+      return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    function checkTimerSoundMilestones(secs) {
+      if (secs === 1200) {
+        playReminderChime();
+        showToast("⏰ Milestone Alert: 20 minutes elapsed! Great effort, keep going!");
+      } else if (secs > 1200 && (secs - 1200) % 300 === 0) {
+        playReminderChime();
+        const mins = Math.floor(secs / 60);
+        showToast(`⏰ Pace Alert: ${mins} minutes elapsed.`);
+      }
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('reminderToast');
+      if (toast) {
+        toast.textContent = msg;
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 6000);
+      }
+    }
+
+    function startTimer() {
+      if (!timerRunning) {
+        timerRunning = true;
+        document.getElementById('timerToggleBtn').textContent = 'Pause';
+        timerInterval = setInterval(() => {
+          timerSeconds++;
+          document.getElementById('timerDisplay').textContent = formatTime(timerSeconds);
+          checkTimerSoundMilestones(timerSeconds);
+        }, 1000);
+      }
+    }
+
+    function pauseTimer() {
+      timerRunning = false;
+      document.getElementById('timerToggleBtn').textContent = 'Resume';
+      clearInterval(timerInterval);
+    }
+
+    function toggleTimer() {
+      if (timerRunning) pauseTimer();
+      else startTimer();
+    }
+
+    function resetTimer() {
+      pauseTimer();
+      timerSeconds = 0;
+      document.getElementById('timerDisplay').textContent = '00:00';
+      document.getElementById('timerToggleBtn').textContent = 'Start';
+    }
+
+    /* ==========================================================================
+       SYNTHESIZER AUDIO & REMINDER CHIME ENGINE
+       ========================================================================== */
+    let soundEnabled = true;
+    let audioCtx = null;
+
+    function getAudioContext() {
+      if (!audioCtx) {
+        const AudioClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioClass) audioCtx = new AudioClass();
+      }
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume().catch(() => {});
+      }
+      return audioCtx;
+    }
+
+    function playSound(type) {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        const now = ctx.currentTime;
+        if (type === 'correct') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(659.25, now);
+          osc.frequency.exponentialRampToValueAtTime(880, now + 0.15);
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.linearRampToValueAtTime(0.001, now + 0.25);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.26);
+        } else if (type === 'incorrect') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(196, now);
+          osc.frequency.exponentialRampToValueAtTime(146, now + 0.18);
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.linearRampToValueAtTime(0.001, now + 0.22);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.24);
+        }
+      } catch(e) {}
+    }
+
+    function playReminderChime() {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        const now = ctx.currentTime;
+        const chimeNotes = [523.25, 659.25, 783.99, 1046.50];
+        chimeNotes.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now + idx * 0.14);
+          gain.gain.setValueAtTime(0.001, now + idx * 0.14);
+          gain.gain.linearRampToValueAtTime(0.22, now + idx * 0.14 + 0.03);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.14 + 0.65);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now + idx * 0.14);
+          osc.stop(now + idx * 0.14 + 0.7);
+        });
+      } catch(e) {}
+    }
+
+    /* ==========================================================================
+       IN-MEMORY STATE MANAGEMENT
+       ========================================================================== */
+    let state = {
+      currentProblemIdx: 0,
+      problems: {}
+    };
+
+    function getProblemState(idx) {
+      if (!state.problems[idx]) {
+        state.problems[idx] = { completedSteps: [], inputs: {}, isSolved: false, isSkipped: false };
+      }
+      return state.problems[idx];
+    }
+
+    function cleanString(s) {
+      return (s || "").toString().trim().toLowerCase().replace(/\s+/g, '').replace(/−/g, '-');
+    }
+
+    function testInputMatching(userStr, targetStr, altStr) {
+      const u = cleanString(userStr);
+      const t = cleanString(targetStr);
+      if (!u) return false;
+      if (u === t) return true;
+      if (altStr) {
+        const alts = altStr.split('|').map(cleanString);
+        if (alts.includes(u)) return true;
+      }
+      
+      const parseVal = (str) => {
+        if (!str) return NaN;
+        if (str.includes('/')) {
+          const parts = str.split('/');
+          return parts.length === 2 ? parseFloat(parts[0]) / parseFloat(parts[1]) : NaN;
+        }
+        return parseFloat(str);
+      };
+      const numU = parseVal(u);
+      const numT = parseVal(t);
+      if (!isNaN(numU) && !isNaN(numT)) {
+        return Math.abs(numU - numT) < 0.02;
+      }
+      return false;
+    }
+
+    function triggerMathTypeset() {
+      if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
+        window.MathJax.typesetPromise().catch(() => {});
+      }
+    }
+
+    /* Keypad Helpers */
+    let activeInputElement = null;
+    window.trackActiveField = function(el) { activeInputElement = el; };
+    window.insertSymbol = function(sym) {
+      if (!activeInputElement) return;
+      const start = activeInputElement.selectionStart || 0;
+      const end = activeInputElement.selectionEnd || 0;
+      const val = activeInputElement.value;
+      activeInputElement.value = val.substring(0, start) + sym + val.substring(end);
+      activeInputElement.focus();
+      activeInputElement.dispatchEvent(new Event('input', { bubbles: true }));
+    };
+    window.clearActiveField = function() {
+      if (!activeInputElement) return;
+      activeInputElement.value = '';
+      activeInputElement.dispatchEvent(new Event('input', { bubbles: true }));
+      activeInputElement.focus();
+    };
+
+    window.switchToolTab = function(tab) {
+      document.getElementById('tabPadBtn').classList.toggle('active', tab === 'pad');
+      document.getElementById('tabCalcBtn').classList.toggle('active', tab === 'calc');
+      document.getElementById('mathPadView').style.display = tab === 'pad' ? 'grid' : 'none';
+      document.getElementById('calcView').style.display = tab === 'calc' ? 'block' : 'none';
+    };
+
+    let calcExpression = "";
+    window.calcAppend = function(val) { calcExpression += val; document.getElementById('calcScreen').textContent = calcExpression || "0"; };
+    window.calcClear = function() { calcExpression = ""; document.getElementById('calcScreen').textContent = "0"; };
+    window.calcSqrt = function() {
+      try { calcExpression = String(Math.sqrt(eval(calcExpression || "0"))); document.getElementById('calcScreen').textContent = calcExpression; } catch(e) {}
+    };
+    window.calcEval = function() {
+      try { calcExpression = String(eval(calcExpression || "0")); document.getElementById('calcScreen').textContent = calcExpression; } catch(e) {}
+    };
+
+    /* Navigation */
+    function switchMainTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      const targetBtn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.getAttribute('onclick') && b.getAttribute('onclick').includes(tabId));
+      if (targetBtn) targetBtn.classList.add('active');
+
+      document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+      const targetSec = document.getElementById(`${tabId}View`);
+      if (targetSec) targetSec.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      if (tabId === 'sheet') {
+        renderProblem(state.currentProblemIdx);
+        if (!timerRunning && timerSeconds === 0) startTimer();
+      }
+      if (tabId === 'solutions') renderSolutions();
+      triggerMathTypeset();
+    }
+
+    function renderProblem(idx) {
+      if (idx < 0 || idx >= PROBLEMS_DATA.length) return;
+      state.currentProblemIdx = idx;
+      const prob = PROBLEMS_DATA[idx];
+      const pState = getProblemState(idx);
+
+      document.getElementById('pNumberDisplay').textContent = prob.title;
+      document.getElementById('pCategoryBadge').textContent = prob.category;
+      document.getElementById('pPartsBadge').textContent = prob.partsInfo;
+      document.getElementById('pContextDisplay').innerHTML = prob.context;
+
+      const badge = document.getElementById('pStatusBadge');
+      if (pState.isSolved) { badge.className = 'status-badge badge-complete'; badge.textContent = 'Completed'; }
+      else if (pState.isSkipped) { badge.className = 'status-badge badge-skipped'; badge.textContent = 'Skipped'; }
+      else if (pState.completedSteps.length > 0) { badge.className = 'status-badge badge-progress'; badge.textContent = 'In Progress'; }
+      else { badge.className = 'status-badge badge-unvisited'; badge.textContent = 'Unvisited'; }
+
+      const container = document.getElementById('stepsListContainer');
+      container.innerHTML = '';
+
+      const maxStep = pState.isSolved ? prob.steps.length - 1 : Math.min(pState.completedSteps.length, prob.steps.length - 1);
+
+      for (let sIdx = 0; sIdx <= maxStep; sIdx++) {
+        const step = prob.steps[sIdx];
+        const isDone = pState.completedSteps.includes(sIdx);
+
+        const card = document.createElement('div');
+        card.className = `step-card ${isDone ? 'completed' : 'active'}`;
+        card.innerHTML = `
+          <div class="step-header-bar">
+            <div class="step-title-text">${step.title}</div>
+            <span class="step-status-indicator">${isDone ? '✓ Verified' : 'Current Step'}</span>
+          </div>
+          <div class="step-prompt">${step.prompt}</div>
+          <div class="step-controls">
+            <div></div>
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span class="step-feedback-msg" id="step-msg-${idx}-${sIdx}"></span>
+              ${!isDone ? `
+                <button class="btn btn-step-check" onclick="verifyStepAnswers(${idx}, ${sIdx})">
+                  ${sIdx === prob.steps.length - 1 ? 'Verify & Finish Question ✓' : 'Verify & Continue →'}
+                </button>
+              ` : '<span style="color:var(--correct-green); font-weight:700;">✓ Correct</span>'}
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+
+        card.querySelectorAll('.step-input').forEach((inp, iIdx) => {
+          const inputKey = `p${idx}_s${sIdx}_i${iIdx}`;
+          inp.setAttribute('data-key', inputKey);
+          inp.setAttribute('onfocus', 'trackActiveField(this)');
+          if (pState.inputs[inputKey] !== undefined) inp.value = pState.inputs[inputKey];
+
+          if (isDone) {
+            inp.disabled = true;
+            inp.classList.add('input-correct');
+          } else {
+            inp.addEventListener('input', (e) => { pState.inputs[inputKey] = e.target.value; });
+            inp.addEventListener('keypress', (e) => { if (e.key === 'Enter') verifyStepAnswers(idx, sIdx); });
+          }
+        });
+      }
+
+      document.getElementById('prevProblemBtn').disabled = idx === 0;
+      document.getElementById('nextProblemBtn').disabled = idx === PROBLEMS_DATA.length - 1;
+      renderPalette();
+      triggerMathTypeset();
+    }
+
+    window.verifyStepAnswers = function(pIdx, sIdx) {
+      const prob = PROBLEMS_DATA[pIdx];
+      const pState = getProblemState(pIdx);
+      const card = document.querySelectorAll('.step-card')[sIdx];
+      if (!card) return;
+
+      const inputs = card.querySelectorAll('.step-input');
+      let ok = true;
+
+      inputs.forEach(inp => {
+        const ans = inp.getAttribute('data-ans') || '';
+        const alt = inp.getAttribute('data-alt') || '';
+        const inputKey = inp.getAttribute('data-key');
+        pState.inputs[inputKey] = inp.value;
+
+        if (testInputMatching(inp.value, ans, alt)) {
+          inp.classList.remove('input-incorrect');
+          inp.classList.add('input-correct');
+        } else {
+          inp.classList.remove('input-correct');
+          inp.classList.add('input-incorrect');
+          ok = false;
+        }
+      });
+
+      const msg = document.getElementById(`step-msg-${pIdx}-${sIdx}`);
+      if (ok) {
+        playSound('correct');
+        if (!pState.completedSteps.includes(sIdx)) pState.completedSteps.push(sIdx);
+        pState.isSkipped = false;
+        if (msg) {
+          msg.className = "step-feedback-msg correct";
+          msg.textContent = "✓ Correct!";
+        }
+        if (pState.completedSteps.length === prob.steps.length) {
+          pState.isSolved = true;
+          setTimeout(() => renderProblem(pIdx), 350);
+        } else {
+          setTimeout(() => renderProblem(pIdx), 300);
+        }
+      } else {
+        playSound('incorrect');
+        if (msg) {
+          msg.className = "step-feedback-msg incorrect";
+          msg.textContent = "✗ Check calculation and try again.";
+        }
+      }
+    };
+
+    function renderPalette() {
+      const grid = document.getElementById('paletteGridContainer');
+      grid.innerHTML = '';
+      let solvedCount = 0;
+
+      PROBLEMS_DATA.forEach((p, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'palette-btn';
+        btn.textContent = p.id;
+        const ps = state.problems[idx];
+        if (ps) {
+          if (ps.isSolved) { btn.classList.add('completed'); solvedCount++; }
+          else if (ps.isSkipped) btn.classList.add('skipped');
+          else if (ps.completedSteps.length > 0) btn.classList.add('progress');
+        }
+        if (idx === state.currentProblemIdx) btn.classList.add('active');
+        btn.onclick = () => renderProblem(idx);
+        grid.appendChild(btn);
+      });
+      document.getElementById('completionRateText').textContent = `${solvedCount}/${PROBLEMS_DATA.length} Solved`;
+    }
+
+    document.getElementById('prevProblemBtn').onclick = () => { if (state.currentProblemIdx > 0) renderProblem(state.currentProblemIdx - 1); };
+    document.getElementById('nextProblemBtn').onclick = () => { if (state.currentProblemIdx < PROBLEMS_DATA.length - 1) renderProblem(state.currentProblemIdx + 1); };
+    document.getElementById('skipProblemBtn').onclick = () => {
+      const ps = getProblemState(state.currentProblemIdx);
+      ps.isSkipped = true;
+      if (state.currentProblemIdx < PROBLEMS_DATA.length - 1) renderProblem(state.currentProblemIdx + 1);
+      else renderProblem(state.currentProblemIdx);
+    };
+
+    document.getElementById('finishAssessmentBtn').onclick = () => {
+      pauseTimer();
+      switchMainTab('solutions');
+    };
+
+    function renderSolutions() {
+      let solved = 0, skipped = 0;
+      PROBLEMS_DATA.forEach((p, idx) => {
+        const ps = state.problems[idx];
+        if (ps && ps.isSolved) solved++;
+        else if (ps && ps.isSkipped) skipped++;
+      });
+      const total = PROBLEMS_DATA.length;
+      document.getElementById('finalScoreVal').textContent = solved;
+      document.getElementById('accuracyStat').textContent = `${Math.round((solved/total)*100)}%`;
+      document.getElementById('correctCountStat').textContent = solved;
+      document.getElementById('skippedCountStat').textContent = skipped;
+
+      const desc = document.getElementById('performanceFeedbackDesc');
+      desc.textContent = solved === total 
+        ? `🌟 Flawless mastery! You solved all 35 linear equations and multi-stage applied word problems in ${formatTime(timerSeconds)}.` 
+        : `Completed in ${formatTime(timerSeconds)}. Review the comprehensive step rationales below to polish your equation solving skills.`;
+
+      const container = document.getElementById('reviewListContainer');
+      container.innerHTML = '';
+
+      PROBLEMS_DATA.forEach((prob, idx) => {
+        const card = document.createElement('div');
+        card.className = 'review-card';
+        let stepsHTML = prob.steps.map(st => `
+          <div style="margin-top:10px; padding:12px; background:#f0f9ff; border-left:3px solid var(--primary-blue); border-radius:4px; border:1px solid var(--blue-border-soft); border-left-width:3px;">
+            <strong style="color:var(--primary-dark); font-size:0.95rem;">${st.title}</strong>
+            <p style="margin-top:4px; font-size:0.95rem; color:#0c4a6e;">${st.explanation}</p>
+          </div>
+        `).join('');
+        card.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+            <strong style="color:var(--primary-dark); font-size:1.1rem;">${prob.title} (${prob.category})</strong>
+            <span class="status-badge ${state.problems[idx]?.isSolved ? 'badge-complete' : 'badge-skipped'}">
+              ${state.problems[idx]?.isSolved ? 'Solved' : 'Review'}
+            </span>
+          </div>
+          <div style="font-size:1.05rem; margin-bottom:0.5rem;">${prob.context}</div>
+          ${stepsHTML}
+        `;
+        container.appendChild(card);
+      });
+      triggerMathTypeset();
+    }
+
+    document.getElementById('retakeQuizBtn').onclick = () => {
+      state.problems = {};
+      state.currentProblemIdx = 0;
+      resetTimer();
+      switchMainTab('sheet');
+    };
+
+    document.getElementById('soundToggleBtn').onclick = () => {
+      soundEnabled = !soundEnabled;
+      document.getElementById('soundIcon').textContent = soundEnabled ? '🔊' : '🔇';
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderProblem(0);
+      triggerMathTypeset();
+    });
+  </script>
+</body>
+</html>
